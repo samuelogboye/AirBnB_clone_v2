@@ -114,7 +114,73 @@ class HBNBCommand(cmd.Cmd):
         pass
 
     def do_create(self, args):
-        """ Create an object of any class"""
+        """
+        Create an object of any class with parameters.
+        Command syntax: create <Class name> <param 1> <param 2> <param 3>...
+        Param syntax: <key name>=<value>
+        Value syntax:
+            - String: "<value>" => starts with a double quote
+            - Any double quote inside the value must be escaped with a backslash \
+            - All underscores (_) must be replaced by spaces.
+            - Example: You want to set the string My little house to the attribute name,
+                your command line must be name="My_little_house"
+            - Float: <unit>.<decimal> => contains a dot .
+            - Integer: <number> => default case
+            If any parameter doesn’t fit with these requirements or can’t be recognized correctly by your program, it must be skipped.
+        """
+        if not args:
+            print("** class name missing **")
+            return
+
+        parts = args.split()
+        class_name = parts[0]
+
+        if class_name not in HBNBCommand.classes:
+            print("** class doesn't exist **")
+            return
+
+        try:
+            # Create an instance of the specified class
+            new_instance = HBNBCommand.classes[class_name]()
+
+            # Extract parameters and set attributes
+            for param in parts[1:]:
+                key_value = param.split("=")
+                if len(key_value) != 2:
+                    print(f"Skipping invalid parameter: {param}")
+                    continue
+
+                key, value = key_value
+                key = key.replace("_", " ")  # Replace underscores with spaces
+                value = value.strip('"')  # Remove surrounding double quotes
+                if '"' in value:
+                    value = value.replace('\\"', '"')  # Unescape double quotes
+
+                # Try to parse the value as an integer or float, if possible
+                if "." in value:
+                    try:
+                        value = float(value)
+                    except ValueError:
+                        pass
+                else:
+                    try:
+                        value = int(value)
+                    except ValueError:
+                        pass
+
+                setattr(new_instance, key, value)
+
+            new_instance.save()
+            print(new_instance.id)
+
+        except Exception as e:
+            print(f"Error creating object: {str(e)}")
+
+        storage.save()
+
+    """
+    def do_create(self, args):
+        # Create an object of any class
         if not args:
             print("** class name missing **")
             return
@@ -125,6 +191,7 @@ class HBNBCommand(cmd.Cmd):
         storage.save()
         print(new_instance.id)
         storage.save()
+    """
 
     def help_create(self):
         """ Help information for the create method """
