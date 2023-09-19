@@ -12,12 +12,14 @@ from models.amenity import Amenity
 from models.place import Place
 from models.review import Review
 
+
 class DBStorage:
     '''
     Database storage engine
     '''
     __engine = None
     __session = None
+
     def __init__(self):
         '''DBstorage instances'''
         user = getenv("HBNB_MYSQL_USER")
@@ -25,10 +27,12 @@ class DBStorage:
         host = getenv("HBNB_MYSQL_HOST")
         db_name = getenv("HBNB_MYSQL_DB")
         env = getenv("HBNB_ENV")
-        self.__engine = create_engine("mysql+mysqldb://{}:{}@{}/{}".format(user, pwd, host, db_name), pool_pre_ping=True)
+        self.__engine = create_engine(
+            "mysql+mysqldb://{}:{}@{}/{}".format(
+                user, pwd, host, db_name), pool_pre_ping=True)
         if env == "test":
             Base.metadata.drop_all(bind=self.__engine)
-    
+
     def all(self, cls=None):
         """Returns a dictionary of models currently in storage"""
         storage_dict = {}
