@@ -10,12 +10,13 @@ class State(BaseModel, Base):
     """ State class """
     __tablename__ = 'states'
     name = Column(String(128), nullable=False)
-    cities = relationship("City", cascade="all, delete, delete-orphan", backref="state")
+    cities = relationship(
+        "City", cascade="all, delete, delete-orphan", backref="state")
 
     if getenv("HBNB_TYPE_STORAGE") != "db":
         @property
         def cities(self):
             """Getter for cities"""
             from models import storage, City
-            return [
-                city for city in storage.all(City).values() if city.state_id == self.id]
+            return [city for city in storage.all(City).values()
+                    if city.state_id == self.id]

@@ -5,6 +5,7 @@ from sqlalchemy import Column, String, ForeignKey
 from sqlalchemy.orm import relationship, backref
 import models
 
+
 class User(BaseModel, Base):
     """This class defines a user by various attributes
     email = ''
