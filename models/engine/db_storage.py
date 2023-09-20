@@ -14,22 +14,24 @@ from models.review import Review
 
 
 class DBStorage:
-    '''
+    """
     Database storage engine
-    '''
+    """
+
     __engine = None
     __session = None
 
     def __init__(self):
-        '''DBstorage instances'''
+        """DBstorage instances"""
         user = getenv("HBNB_MYSQL_USER")
         pwd = getenv("HBNB_MYSQL_PWD")
         host = getenv("HBNB_MYSQL_HOST")
         db_name = getenv("HBNB_MYSQL_DB")
         env = getenv("HBNB_ENV")
         self.__engine = create_engine(
-            "mysql+mysqldb://{}:{}@{}/{}".format(
-                user, pwd, host, db_name), pool_pre_ping=True)
+            "mysql+mysqldb://{}:{}@{}/{}".format(user, pwd, host, db_name),
+            pool_pre_ping=True,
+        )
         if env == "test":
             Base.metadata.drop_all(bind=self.__engine)
 
@@ -67,8 +69,7 @@ class DBStorage:
     def reload(self):
         """reload all tables in the database"""
         Base.metadata.create_all(self.__engine)
-        session_factory = sessionmaker(
-            bind=self.__engine, expire_on_commit=False)
+        session_factory = sessionmaker(bind=self.__engine, expire_on_commit=False)
         session = scoped_session(session_factory)
         self.__session = session()
 
