@@ -44,7 +44,10 @@ class Place(BaseModel, Base):
     amenity_ids = []
 
     if getenv("HBNB_TYPE_STORAGE") == "db":
-        reviews = relationship("Review", cascade="all, delete", backref="place")
+        reviews = relationship(
+            "Review", cascade="all, delete, delete-orphan", backref="place"
+        )
+
         amenities = relationship(
             "Amenity",
             secondary="place_amenity",
@@ -77,7 +80,6 @@ class Place(BaseModel, Base):
         def amenities(self, obj=None):
             """setter attribute cities that returns
             the list of City instances"""
-            from models import storage
             from models.amenity import Amenity
 
             if type(obj) is Amenity and obj.id not in self.amenity_ids:
