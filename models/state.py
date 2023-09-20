@@ -13,18 +13,9 @@ class State(BaseModel, Base):
     cities = relationship(
         "City", cascade="all, delete, delete-orphan", backref="state")
 
-
-    @property
-    def cities(self):
-        """Getter for cities"""
-        from models import storage, City
-        return [city for city in storage.all(City).values()
-                if city.state_id == self.id]
-    """
     if getenv("HBNB_TYPE_STORAGE") != "db":
         @property
         def cities(self):
             from models import storage, City
             return [city for city in storage.all(City).values()
                     if city.state_id == self.id]
-    """
