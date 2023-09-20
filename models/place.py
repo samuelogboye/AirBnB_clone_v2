@@ -52,11 +52,10 @@ class Place(BaseModel, Base):
             "Amenity",
             secondary=place_amenity,
             viewonly=False,
-            back_populates="place_amenities",
+            back_populates="place_amenities"
         )
 
     else:
-
         @property
         def reviews(self):
             """getter attribute cities that returns
@@ -68,7 +67,7 @@ class Place(BaseModel, Base):
             for review in storage.all(Review).values():
                 if review.place_id == self.id:
                     reviews_list.append(review)
-            return reviews_list
+            return (reviews_list)
 
         @property
         def amenities(self):
