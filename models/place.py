@@ -7,26 +7,28 @@ from sqlalchemy.orm import relationship
 from os import getenv
 import models
 
-if getenv("HBNB_TYPE_STORAGE") == "db":
-    place_amenity = Table("place_amenity", Base.metadata,
-            Column("place_id",
-                String(60),
-                ForeignKey("places.id"),
-                primary_key=True,
-                nullable=False,
+place_amenity = Table(
+    "place_amenity",
+    Base.metadata,
+    Column(
+        "place_id",
+        String(60),
+        ForeignKey("places.id"),
+        primary_key=True,
+        nullable=False,
     ),
-            Column(
-                "amenity_id",
-                String(60),
-                ForeignKey("amenities.id"),
-                primary_key=True,
-                nullable=False,
+    Column(
+        "amenity_id",
+        String(60),
+        ForeignKey("amenities.id"),
+        primary_key=True,
+        nullable=False,
     ),
 )
 
 
 class Place(BaseModel, Base):
-    """A place to stay"""
+    """A Place Class to stay"""
 
     __tablename__ = "places"
     city_id = Column(String(60), ForeignKey("cities.id"), nullable=False)
@@ -43,7 +45,7 @@ class Place(BaseModel, Base):
 
     if getenv("HBNB_TYPE_STORAGE") == "db":
         reviews = relationship(
-            "Review", cascade="all, delete, delete-orphan", backref=backref("place", cascade="all, delete")
+            "Review", cascade="all, delete, delete-orphan", backref="place"
         )
 
         amenities = relationship(

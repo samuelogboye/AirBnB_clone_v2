@@ -8,14 +8,11 @@ from models.place import Place
 
 
 class City(BaseModel, Base):
-    """The city class, contains state ID and name"""
+    """The City class, contains state ID and name"""
 
     __tablename__ = "cities"
     name = Column(String(128), nullable=False)
-    state_id = Column(String(60), ForeignKey("states.id",ondelete="CASCADE"), nullable=False)
+    state_id = Column(String(60), ForeignKey("states.id"), nullable=False)
     places = relationship(
-        "Place", 
-        cascade="all",
-        backref=backref("cities", cascade="all"),
-        passive_deletees=True
+        "Place", cascade="all, delete, delete-orphan", backref="cities"
     )

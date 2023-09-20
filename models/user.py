@@ -8,7 +8,7 @@ from models.review import Review
 
 
 class User(BaseModel, Base):
-    """This class defines a user by various attributes
+    """This User class defines a user by various attributes
     email = email address
     password = password
     first_name
@@ -22,11 +22,7 @@ class User(BaseModel, Base):
     last_name = Column(String(128), nullable=True)
 
     places = relationship(
-        "Place", cascade="all, delete, delete-orphan", 
-        backref=backref("user", cascade="all,delete"), passive_deletes=True,
-        single_parent=True)
+        "Place", cascade="all, delete, delete-orphan", backref="user")
     reviews = relationship(
-        "Review", cascade="all, delete, delete-orphan", 
-        backref=backref("user", cascade="all, delete"), 
-        passive_deletes=True, single_parent=True
+        "Review", cascade="all, delete, delete-orphan", backref="user"
     )
