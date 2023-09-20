@@ -23,11 +23,3 @@ class State(BaseModel, Base):
             if city.state_id == self.id:
                 cities_list.append(city)
         return cities_list
-    """
-    if getenv("HBNB_TYPE_STORAGE") != "db":
-        @property
-        def cities(self):
-            from models import storage, City
-            return [city for city in storage.all(City).values()
-                    if city.state_id == self.id]
-    """
