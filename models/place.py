@@ -1,11 +1,10 @@
 #!/usr/bin/python3
 """ Place Module for HBNB project """
-from sqlalchemy.ext.declarative import declarative_base
 from models.base_model import BaseModel, Base
 from sqlalchemy import Column, String, ForeignKey, Integer, Float, Table
 from sqlalchemy.orm import relationship
 from os import getenv
-from models import storage
+import models
 
 if getenv("HBNB_TYPE_STORAGE") == "db":
     place_amenity = Table(
@@ -40,15 +39,12 @@ class Place(BaseModel, Base):
         price_by_night = Column(Integer, nullable=False, default=0)
         latitude = Column(Float, nullable=False)
         longitude = Column(Float, nullable=False)
-        amenity_ids = []
-
         reviews = relationship(
-            "Review", cascade="all, delete, delete-orphan", backref="place"
+            "Review", cascade="all, delete", backref="places"
         )
-
         amenities = relationship(
             "Amenity",
-            secondary=place_amenity,
+            secondary='place_amenity',
             viewonly=False,
             back_populates="place_amenities"
         )
@@ -75,10 +71,10 @@ class Place(BaseModel, Base):
         """getter attribute cities that returns
             the list of City instances"""
         reviews_list = []
-        for review in storage.all("Review").values():
+        for review in models.storage.all("Review").values():
             if review.place_id == self.id:
                 reviews_list.append(review)
-        return (reviews_list)
+        return reviews_list
 
     if getenv("HBNB_TYPE_STORAGE") != "db":
         @property
@@ -86,7 +82,7 @@ class Place(BaseModel, Base):
             """getter attribute cities that returns
             the list amenity ids"""
             list_amenities = []
-            for amenity in storage.all("Amenity").values():
+            for amenity in models.storage.all("Amenity").values():
                 if amenity.id in self.amenity_ids:
                     list_amenities.append(amenity)
             return list_amenities
