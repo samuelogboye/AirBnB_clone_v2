@@ -5,6 +5,7 @@ from sqlalchemy import Column, Integer, String, ForeignKey
 from sqlalchemy.orm import relationship, backref
 from models.place import Place
 from models.review import Review
+from os import getenv
 
 
 class User(BaseModel, Base):
@@ -14,15 +15,45 @@ class User(BaseModel, Base):
     first_name
     last_name
     """
+    if getenv("HBNB_TYPE_STORAGE") == "db":
+        __tablename__ = "users"
+        email = Column(String(128), nullable=False)
+        _password = Column('password', String(128), nullable=False)
+        first_name = Column(String(128), nullable=True)
+        last_name = Column(String(128), nullable=True)
 
-    __tablename__ = "users"
-    email = Column(String(128), nullable=False)
-    password = Column(String(128), nullable=False)
-    first_name = Column(String(128), nullable=True)
-    last_name = Column(String(128), nullable=True)
+        places = relationship(
+            "Place", cascade="all, delete, delete-orphan", backref="user")
+        reviews = relationship(
+            "Review", cascade="all, delete, delete-orphan", backref="user")
 
-    places = relationship(
-        "Place", cascade="all, delete, delete-orphan", backref="user")
-    reviews = relationship(
-        "Review", cascade="all, delete, delete-orphan", backref="user"
-    )
+    else:
+        email = ""
+        _password = ""
+        first_name = ""
+        last_name = ""
+
+    def __init__(self, *args, **kwargs):
+        """initialize the User"""
+        super().__init__(*args, **kwargs)
+
+    @property
+    def password(self):
+        """
+        Get the value of the password property.
+
+        Returns:
+            The value of the password property.
+        """
+        return self._password
+
+    @password.setter
+    def password(self, password):
+        """
+        Set the password for the user.
+        Args:
+            password (str): The new password for the user.
+        Returns:
+            None
+        """
+        self._password = password
