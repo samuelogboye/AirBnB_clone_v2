@@ -6,7 +6,7 @@ from models import storage
 import os
 
 
-class test_fileStorage(unittest.TestCase):
+class test_file_storage(unittest.TestCase):
     """ Class to test the file storage method """
 
     def setUp(self):
@@ -31,15 +31,17 @@ class test_fileStorage(unittest.TestCase):
     def test_new(self):
         """ New object is correctly added to __objects """
         new = BaseModel()
-        for obj in storage.all().values():
-            temp = obj
-        self.assertTrue(temp is obj)
+        objects = storage.all().values()
+        temp = list(objects)[-1]  # Get the last object
+        self.assertIn(new, objects)
+        self.assertTrue(temp is new)
 
     def test_all(self):
         """ __objects is properly returned """
         new = BaseModel()
         temp = storage.all()
         self.assertIsInstance(temp, dict)
+        self.assertIn(new, temp.values())
 
     def test_base_model_instantiation(self):
         """ File is not created on BaseModel save """
