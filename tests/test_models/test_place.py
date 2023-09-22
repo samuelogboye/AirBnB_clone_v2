@@ -61,7 +61,7 @@ class test_place(test_basemodel):
     def test_longitude(self):
         """ """
         new = self.value()
-        self.assertEqual(type(new.latitude), float)
+        self.assertEqual(type(new.llongitude), float)
 
     def test_amenity_ids(self):
         """ """
