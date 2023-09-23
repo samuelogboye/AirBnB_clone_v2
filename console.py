@@ -113,7 +113,7 @@ class HBNBCommand(cmd.Cmd):
         pass
 
     def do_create(self, args):
-        """"""
+        """Create"""
         cls = args.partition(' ')[0]
         args = args.partition(' ')[2].split()  # args is now a list
 
