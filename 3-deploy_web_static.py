@@ -11,7 +11,6 @@ import os
 env.hosts = ['3.84.168.238', '54.197.75.194']
 
 
-
 def do_pack():
     """
     do_pack function that generates a .tgz archive from the web_static folder,
