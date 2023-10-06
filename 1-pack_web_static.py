@@ -1,4 +1,4 @@
-#!/usr/bin/env python3
+#!/usr/bin/python3
 """
 A fabric script that generates a .tgz archive from the web_static folder,
 ready to be uploaded to the servers.
