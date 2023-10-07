@@ -1,8 +1,6 @@
 #!/usr/bin/python3
 """
-This python program creates archive on local machine,
-deploy it to the target servers and unzip it with some
-other cool stuffs
+A fabric script that pack and distributes an archive on server
 """
 
 
@@ -10,10 +8,7 @@ from fabric.api import *
 import os
 from datetime import datetime
 
-
 env.hosts = ['3.84.168.238', '54.197.75.194']
-env.rsa = '~/.ssh/id_rsa'
-env.user = 'ubuntu'
 
 
 def do_pack():
@@ -42,7 +37,8 @@ def do_deploy(archive_path):
         archived_file = "/tmp/" + archived_file
         put(archive_path, "/tmp/")
         run("sudo mkdir -p {}".format(newest_version))
-        run("sudo tar -xzf {} -C {}/".format(archived_file, newest_version))
+        run("sudo tar -xzf {} -C {}/".format(archived_file,
+                                             newest_version))
         run("sudo rm {}".format(archived_file))
         run("sudo mv {}/web_static/* {}".format(newest_version,
                                                 newest_version))
@@ -52,4 +48,5 @@ def do_deploy(archive_path):
 
         print("New version deployed!")
         return True
+
     return False
