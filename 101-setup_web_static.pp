@@ -1,43 +1,88 @@
-# This program will install Nginx and Put a static file in it.
-# This bash script will automate the creation of files.
+# Configures a web server for deployment of web_static.
 
-exec {'run':
-     command	=>  "sudo apt update && sudo apt-get install nginx -y"
-     }
-
-exec { 'ufw':
-    command =>  "sudo ufw allow 'Nginx HTTP'"
+# Nginx configuration file
+$nginx_conf = "server {
+    listen 80 default_server;
+    listen [::]:80 default_server;
+    add_header X-Served-By ${hostname};
+    root   /var/www/html;
+    index  index.html index.htm;
+    location /hbnb_static {
+        alias /data/web_static/current;
+        index index.html index.htm;
     }
+    location /redirect_me {
+        return 301 http://cuberule.com/;
+    }
+    error_page 404 /404.html;
+    location /404 {
+      root /var/www/html;
+      internal;
+    }
+}"
 
-# Creating All Required Folders and File
-exec { 'files_folder':
-     command => "sudo mkdir -p /data/web_static/releases/test &&
-              sudo mkdir -p /data/web_static/shared &&
-              sudo touch /data/web_static/releases/test/index.html"
+package { 'nginx':
+  ensure   => 'present',
+  provider => 'apt'
+} ->
+
+file { '/data':
+  ensure  => 'directory'
+} ->
+
+file { '/data/web_static':
+  ensure => 'directory'
+} ->
+
+file { '/data/web_static/releases':
+  ensure => 'directory'
+} ->
+
+file { '/data/web_static/releases/test':
+  ensure => 'directory'
+} ->
+
+file { '/data/web_static/shared':
+  ensure => 'directory'
+} ->
+
+file { '/data/web_static/releases/test/index.html':
+  ensure  => 'present',
+  content => "Holberton School Puppet\n"
+} ->
+
+file { '/data/web_static/current':
+  ensure => 'link',
+  target => '/data/web_static/releases/test'
+} ->
+
+exec { 'chown -R ubuntu:ubuntu /data/':
+  path => '/usr/bin/:/usr/local/bin/:/bin/'
 }
 
-PATH_F=/data/web_static/releases/test/index.html
+file { '/var/www':
+  ensure => 'directory'
+} ->
 
-# Adding a Test Content to index file
-CONTENT="<html>
-<head>
-</head>
-<body>
-    Holberton School
-</body>
-</html>"
+file { '/var/www/html':
+  ensure => 'directory'
+} ->
 
-echo "$CONTENT" | sudo tee "$PATH_F"
+file { '/var/www/html/index.html':
+  ensure  => 'present',
+  content => "Holberton School Nginx\n"
+} ->
 
-# Creating A Symbolic Linking
-sudo ln -sfn /data/web_static/releases/test/ /data/web_static/current
+file { '/var/www/html/404.html':
+  ensure  => 'present',
+  content => "Ceci n'est pas une page\n"
+} ->
 
-# Granting Ownership
-sudo chown -R ubuntu:ubuntu /data/
+file { '/etc/nginx/sites-available/default':
+  ensure  => 'present',
+  content => $nginx_conf
+} ->
 
-# Here is the section that configures Nginx Config file
-CONF_PATH=/etc/nginx/sites-enabled/default
-
-sudo sed -i "/listen 80 default_server;/a\\\tlocation /hbnb_static/ {\n\talias /data/web_static/current/;\n\t}" "$CONF_PATH"
-
-sudo service nginx restart
+exec { 'nginx restart':
+  path => '/etc/init.d/'
+}
