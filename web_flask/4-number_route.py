@@ -26,13 +26,18 @@ def index_c(text):
     return 'C {}'.format(text)
 
 
+@app.route('/python', strict_slashes=False)
 @app.route('/python/<text>', strict_slashes=False)
-def index_python(text):
+def index_python(text='is cool'):
     """returns Python <text>!"""
     text = text.replace("_", " ")
-    if text is None:
-        text = "is cool"
     return 'Python {}'.format(text)
+
+
+@app.route('/number/<int:n>', strict_slashes=False)
+def index_number(n):
+    """returns n if n is an integer"""
+    return '{} is a number'.format(n)
 
 
 if __name__ == '__main__':
